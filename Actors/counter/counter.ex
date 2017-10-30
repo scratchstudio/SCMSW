@@ -1,4 +1,10 @@
 defmodule Counter do
+  def start(count) do
+    spawn(__MODULE__, :loop, [count]) # 모듈이름, 함수이름, 함수에 전달될 인수
+  end
+  def next(counter) do
+    send(counter, {:next})
+  end
   def loop(count) do
     receive do
       {:next} ->
@@ -8,9 +14,6 @@ defmodule Counter do
   end
 end
 
-counter = spawn(Counter, :loop, [1]) # 모듈이름, 함수이름, 함수에 전달될 인수
-
-# 가변 변수를 전혀 사용하지 않고 상태를 보관하는 것처럼 보이는 액터
-send(counter, {:next})
-send(counter, {:next})
-send(counter, {:next})
+counter = Counter.start(42)
+Counter.next(counter)
+Counter.next(counter)
